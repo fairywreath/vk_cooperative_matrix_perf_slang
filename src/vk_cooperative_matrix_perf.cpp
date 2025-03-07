@@ -155,6 +155,23 @@ struct TestCase
     uint32_t BNumRows;
 };
 
+void printTestCase(const TestCase *tc) {
+    printf("\n");
+    printf("TestCase:\n");
+    printf("  TestType: %d\n", tc->testType);
+    printf("  Input Type: %d\n", tc->inputType);
+    printf("  Output Type: %d\n", tc->outputType);
+
+    printf("  MxNxK: %u x %u x %u\n", tc->M, tc->N, tc->K);
+    printf("  Cooperative MxNxK: %u x %u x %u\n", tc->lM, tc->lN, tc->lK);
+    printf("  Tile Size: %u x %u x %u\n", tc->TILE_M, tc->TILE_N, tc->TILE_K);
+
+    printf("  BColMajor: %s\n", tc->BColMajor ? "true" : "false");
+    printf("  A Matrix: Rows=%u, Row Length=%u\n", tc->ANumRows, tc->ARowLen);
+    printf("  B Matrix: Rows=%u, Row Length=%u\n", tc->BNumRows, tc->BRowLen);
+    printf("\n");
+}
+
 struct MatrixDesc
 {
     struct
@@ -874,6 +891,7 @@ int main(int argc, char *argv[])
 
                 BColMajor, // bool BColMajor;
             };
+            printTestCase(&testCase);
             float alpha = 2.0f, beta = 3.0f;
 
             if (tt == TT_SHARED || tt == TT_WORKGROUP) {
@@ -1310,14 +1328,25 @@ int main(int argc, char *argv[])
                 break;
             }
 
+            // XXX FW:
+            // printf("FW: break from big inner loop\n");
+            break;
         } // workgroupSize
+            break;
         } // TILE_K
+            break;
         } // bcolmajor
+            break;
         } // TILE_N_size
+            break;
         } // TILE_M_size
 
         vkDestroyShaderModule(device, shaderModule, NULL);
+
+        // XXX FW:
+        break;
     } // numCooperativeMatrixProperties
+        // break;
     } // TT_COUNT
 
     printf("\ndone\n");
